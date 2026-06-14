@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, registerAs } from '@nestjs/config';
+import cors from 'cors';
 import { TypeOrmConfig } from './typeOrm.module.config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -13,6 +14,9 @@ import { SdkModule } from './sdk/sdk.module';
 import { AnalyticsController } from './analytics/analytics.controller';
 import { AnalyticsService } from './analytics/analytics.service';
 
+const typeOrmConfig = registerAs('typeorm', () => TypeOrmConfig);
+
+
 @Module({
   imports: [
     JwtModule.register({
@@ -22,6 +26,7 @@ import { AnalyticsService } from './analytics/analytics.service';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+
     TypeOrmConfig,
     AuthModule,
     UsersModule,

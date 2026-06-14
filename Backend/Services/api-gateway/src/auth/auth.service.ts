@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { messages } from 'src/messages';
@@ -24,7 +24,7 @@ export class AuthService {
       const encryptionKey = SecurityUtil.generateEncryptionKey();
       const existingUser = await this.findUserByEmail(email);
       if (existingUser) {
-        return { messages: messages.EmailAlreadyExists };
+         throw new BadRequestException(messages.EmailAlreadyExists);
       }
       const hashedPassword = await bcrypt.hash(
         password,
@@ -46,24 +46,19 @@ export class AuthService {
   }
 
   async login({ email, password }: { email: string; password: string }) {
-    try {
       const user = await this.findUserByEmail(email);
       if (!user) {
-        return { message: messages.UserNotFound, status: 404 };
+        throw new BadRequestException(messages.UserNotFound);
       }
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return { message: messages.InvalidCredentials, status: 401 };
+        throw new BadRequestException(messages.InvalidCredentials);
       }
       const token = this.jwtService.sign({
         userId: user.id,
         email: user.email,
       });
       return { token, message: 'Login successful' };
-    } catch (error: any) {
-      console.error('Error logging in:', error);
-      throw error.message || 'Login failed';
-    }
   }
 
   async getUserById(id: string): Promise<User | null> {

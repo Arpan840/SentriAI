@@ -3,8 +3,6 @@ import { useGetOverviewQuery } from "@/app/services/analyticsApi";
 
 const Dashboard = () => {
   const { data, isLoading } = useGetOverviewQuery();
-  console.log(data);
-
   if (isLoading) {
     return (
       <div>
@@ -16,7 +14,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <h1>Dashboardss</h1>
     </div>
   );
 };
